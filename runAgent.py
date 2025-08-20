@@ -1,7 +1,7 @@
 from agents import Agent, Runner, SQLiteSession, function_tool, enable_verbose_stdout_logging
 from agents.model_settings import ModelSettings
 from agents.agent import StopAtTools
-#  verbose means des=bbugging
+#  verbose means debuging
 import asyncio
 import random
 
@@ -9,7 +9,7 @@ import random
 from gemini_model import geminiModel, config
 
 
-# enable_verbose_stdout_logging()  # Enable verbose logging for debugging
+enable_verbose_stdout_logging()  # Enable verbose logging for debugging
 
 
 @function_tool   # THIS DECORATOR IS USED TO MAKE SCHEMA AND MAKE THE FUNCTION AVAILABLE TO THE AGENT
@@ -60,7 +60,7 @@ orchestrator = Agent(
     tools= [],
     handoffs= [mathematician, joker],
     model= geminiModel,
-    tool_use_behavior=StopAtTools(stop_on_first_tool=["getjokes"]),
+    tool_use_behavior=StopAtTools(stop_on_first_tool=["getJokes"]),
     
 )
 
