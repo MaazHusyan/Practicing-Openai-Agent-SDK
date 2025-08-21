@@ -16,6 +16,7 @@ jiter==0.10.0
 jsonschema==4.25.0
 jsonschema-specifications==2025.4.1
 mcp==1.12.2
+numpy==2.3.2
 openai==1.97.1
 openai-agents==0.2.3
 pydantic==2.11.7
@@ -36,3 +37,4 @@ typing-extensions==4.14.1
 typing-inspection==0.4.1
 urllib3==2.5.0
 uvicorn==0.35.0
+websockets==15.0.1
