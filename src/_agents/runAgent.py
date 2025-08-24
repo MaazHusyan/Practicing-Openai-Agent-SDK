@@ -48,7 +48,8 @@ joker = Agent(
     """,
     tools= [getJokes],
     model= geminiModel,
-    model_settings= ModelSettings(tool_choice="required")
+    model_settings= ModelSettings(tool_choice="required"),
+    
 )
 
 orchestrator = Agent(
