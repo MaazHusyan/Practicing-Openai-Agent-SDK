@@ -1,7 +1,6 @@
 from agents import Agent, Runner, SQLiteSession, function_tool, ModelSettings
 
-from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import asyncio
 
 from gemini_model import geminiModel, config
@@ -17,9 +16,8 @@ def tellAge(age: int):
     return {"age": age}
 
 class getStructuredOutput(BaseModel):
-    name: Optional[str] = Field(default=None, description="The user's name")
-    age: Optional[int] = Field(default=None, description="The user's age in years")
-
+    name: str |None = None
+    age: str |None = None
 
 
 myAgent = Agent(
