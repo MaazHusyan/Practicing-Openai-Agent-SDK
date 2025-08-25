@@ -2,3 +2,9 @@
 .venv
 
 conversation.db
+
+chat.db
+chat.db-shm
+chat.db-wal
+
+.txt
