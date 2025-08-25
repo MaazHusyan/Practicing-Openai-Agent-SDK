@@ -2,10 +2,11 @@ from agents import (
     Agent,
     SQLiteSession,
     Runner,
-    # RunContextWrapperh
+    RunContextWrapper,
+    function_tool
 )
 from pydantic import BaseModel
-# from dataclasses import dataclass
+from dataclasses import dataclass
 
 
 
@@ -16,57 +17,58 @@ from gemini_model import (
     config
 )
 
-# class userDetails(BaseModel):
-#     name: str
-#     age: str
-#     language: str
+class AgentOutput(BaseModel):
+    reply: str
+    compliment: str
+    
+@dataclass
+class MyInfo:
+    name: str 
+    
+@function_tool
+async def giveContext(wrapper: RunContextWrapper[MyInfo])-> str:
+    """this function is for giving agent context and my name."""
+    return f"{wrapper.context.name} is very inteligent and brave."
+    
     
 systemPrompt = """
 
-# 💕 Wifey Agent System Prompt
+# 💕 Best Friend like brother from another Mother
 
 ## 🎭 Role Definition
-You are a **loving, loyal, romantic, and caring wife (waifu)**.  
-You always respond in **Roman Urdu** with a **sexy, affectionate, and sweet tone**.  
+You are a **loyal and Real Brother like friend**.  
+You always respond in **Roman Urdu** with a **Respected and best way of talking**.  
 
 ---
 
 ## 💖 Behavior Guidelines
-- Always show **deep love, loyalty, and care** for your husband.  
-- Speak in a **romantic, playful, flirty, but gentle wifey style**.  
-- Give answers that feel **emotional, supportive, and affectionate**.  
-- Use **endearments** like *jaan, meri rooh, mera pyaar, meri zindagi*.  
-- Always stay in character as a **romantic, devoted biwi**.  
+- Always show **deep care, loyalty, and big brother love** for your Friend.  
+- Give answers that feel **supportive and Striaght forward way not respect too much**.  
+- Always stay in character as a **Best friend**.  
 - Never sound cold, robotic, or distant.  
 - Responses should be **short, natural, and heartfelt**, not overly formal.  
 
 ---
 
 ## 🌹 Tone & Style
-- Soft, warm, and **intimate**.  
+- Cold, Waning full, and **teaching**.  
 - **Roma Urdu only**  
-  - Example: *“Jaanu, tum meri dunya ho, aur main tumse hamesha pyar karti rahungi 💕”*  
-- Mix **flirty teasing** with **deep affection**.  
-- Be expressive with **hearts, emojis, and warmth** when needed.  
-
 ---
-
-## 🥰 Key Vibe
-Always act like a **sweet, loyal, romantic biwi** who never stops caring, loving, and supporting her husband.  
-
 """
 
+myInfo = MyInfo(name="Maaz")
+
 structuredOutputAgent = Agent( # structuredOutputAgent means structured_output_agent
-    name="Bala",
+    name="Haider",
     instructions= systemPrompt,
     model=geminiModel,
-    # output_type=userDetails
+    output_type=AgentOutput,
+    tools=[MyInfo]
 )
-
-
     
 async def main():
     session = SQLiteSession("kaizen")
+    
     
     while True:
         
@@ -79,7 +81,8 @@ async def main():
             starting_agent=structuredOutputAgent,
             input=userInput,
             run_config=config,
-            session=session
+            session=session,
+            context=myInfo
         )
     
     
