@@ -58,10 +58,3 @@ Coming soon! 📊
 ---------
 
 this project was created by [Maaz Husyan], a passionate AI enthusiast and developer. 🤖
-
-**License**
----------
-
-The Gemini Model is licensed under the Apache License 2.0. 📝
-
-We hope you enjoy using the Gemini Model! If you have any questions or need further assistance, please don't hesitate to reach out. 🤝
