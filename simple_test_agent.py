@@ -1,10 +1,14 @@
-from agents import Agent, Runner, SQLiteSession, function_tool, ModelSettings
+from agents import Agent, Runner, SQLiteSession, function_tool, ModelSettings, enable_verbose_stdout_logging
 
 # from pydantic import BaseModel
 import asyncio
 
 from gemini_model import geminiModel, config
 
+from openai.types.responses import ResponseTextDeltaEvent
+
+
+enable_verbose_stdout_logging()
 
 @function_tool
 def tellAge(age: int):
@@ -32,7 +36,8 @@ model_settings=ModelSettings(tool_choice="required"),
 )
 
 async def runner():
-    session = SQLiteSession("Kaizen", "chat.db")
+    session = SQLiteSession("Kaizen")
+    session2 = SQLiteSession("Kaizen")
     
     while True:
         userInput = input("User: ").strip()
@@ -47,11 +52,16 @@ async def runner():
         input=userInput,
         session=session,
         run_config=config,
-        max_turns=10,
-        
+        max_turns=2,
         )
+        
+       
+        # async for event in result.stream_events():
+        #     if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+        #         print(event.data.delta, end="", flush=True)
+            
                 
-        print(result.final_output)
+        print("\n ---------------------- \n",result.final_output,"\n ---------------------- \n")
         
 if __name__ == "__main__":
     asyncio.run(runner())
