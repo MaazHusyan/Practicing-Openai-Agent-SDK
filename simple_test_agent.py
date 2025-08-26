@@ -56,9 +56,7 @@ async def runner():
         )
         
        
-        # async for event in result.stream_events():
-        #     if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
-        #         print(event.data.delta, end="", flush=True)
+        
             
                 
         print("\n ---------------------- \n",result.final_output,"\n ---------------------- \n")
