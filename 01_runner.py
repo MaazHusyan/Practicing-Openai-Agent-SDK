@@ -1,6 +1,6 @@
 import asyncio
 
-from agents import Agent, Runner, ItemHelpers
+from agents import Agent, Runner
 from openai.types.responses import ResponseTextDeltaEvent
 
 from gemini_model import geminiModel, config
@@ -22,50 +22,37 @@ reasoner = Agent(
 )
 
 async def main():
-    # runResult =await Runner.run( #<==== Using .run method
-    #     teacher,
-    #     "Why kiwi bird can't fly ?",
-    #     run_config=config
-    # )
-    # print(runResult.final_output)
     
-    
-    runStream = Runner.run_streamed(
-        reasoner, 
-        input="Please tell me 5 jokes.",
-        run_config=config,
+    while True:
+        usrInp = input("Ask...[ ")
         
+        if usrInp == "stop":
+            break
+        
+        runResult =await Runner.run( #<==== Using .run method
+            teacher,
+            "Why kiwi bird can't fly ?",
+            run_config=config
         )
-   
-    # print("=== Run starting ===")
-
-    # async for event in runStream.stream_events():
-    #     # We'll ignore the raw responses event deltas
-    #     if event.type == "raw_response_event":
-    #         continue
-    #     # When the agent updates, print that
-    #     elif event.type == "agent_updated_stream_event":
-    #         print(f"Agent updated: {event.new_agent.name}")
-    #         continue
-    #     # When items are generated, print them
-    #     elif event.type == "run_item_stream_event":
-    #         if event.item.type == "tool_call_item":
-    #             print("-- Tool was called")
-    #         elif event.item.type == "tool_call_output_item":
-    #             print(f"-- Tool output: {event.item.output}")
-    #         elif event.item.type == "message_output_item":
-    #             print(f"-- Message output:\n {ItemHelpers.text_message_output(event.item)}")
-    #         else:
-    #             pass  # Ignore other event types
-
-    # print("=== Run complete ===")
-
+        print(runResult.final_output)
     
-    async for event in runStream.stream_events():
-        if event.type == "raw_response_event":
-            # every raw response event has event.data.delta safely
-            print(event.data.delta, end="", flush=True)
-   
+    
+    # runStream = Runner.run_streamed( #<===== Using .run_streamed method
+    #     reasoner, 
+    #     input="Tell me 5 reasons about why bald man doesn't have any hair.",
+    #     run_config=config,
+        
+    #     )
+    
+    # print(runStream.stream_events())
+    
+    
+    # async for event in runStream.stream_events():
+    #     if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+    #         # every raw response event has event.data.delta safely
+    #         print(event.data.delta)
+    #         print(event.data.logprobs)
+
 if __name__ == "__main__":
     asyncio.run(main())
     
