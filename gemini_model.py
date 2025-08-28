@@ -4,11 +4,13 @@ from agents import (
     OpenAIChatCompletionsModel,
     RunConfig
 )
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 
 # Load environment variables from .env file
-load_dotenv()
+_: bool = load_dotenv(find_dotenv())
+
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "") #ONLY FOR ENABLING TRACING 
 
 
 gemini_api_key = os.getenv("GEMINI_API_KEY")
@@ -26,7 +28,7 @@ client = AsyncOpenAI(
 # model 
 geminiModel = OpenAIChatCompletionsModel(
     openai_client = client,
-    model = "gemini-2.0-flash",
+    model = "gemini-2.5-flash",
 )
 
 # configuring the model
