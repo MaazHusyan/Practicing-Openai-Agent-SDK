@@ -6,14 +6,27 @@ from agents import Agent, Runner, handoffs
 from gemini_model import geminiModel, config
 
 
-smartAgent = Agent(
-    name="Smart Agent",
-    instructions=""" You Resolve user queries in short way.
-    use tool "randomFacts" if user ask about facts about any thing. """,
+boyAgent = Agent(
+    name="Boy Agent",
+    instructions="""you always reply to boy, use lots of emojis like [😡🤬💀👺👹👿😈] in response.
+    don't use [😻🥰😘😍❤💕💖💋]""",
+    model=geminiModel
+)
+
+girlAgent = Agent(
+    name="Girl Agent",
+    instructions="""you always reply to girl, use lots of emojis like [😻🥰😘😍❤💕💖💋] in response.
+    don't use  [😡🤬💀👺👹👿😈] """,
+    model=geminiModel
+)
+
+masterAgent = Agent(
+    name="Master Agent",
+    instructions=""" You are a Master agent you have two sub agent (girlAgent, boyAgent). 
+    You can use them upon user request.
+    Always ask users gender first then handoff the relevent agent for batter results.""",
     model=geminiModel,
-    handoffs=handoffs(
-        
-    )
+    handoffs=[boyAgent, girlAgent]
 )
 
 async def main():
@@ -25,7 +38,7 @@ async def main():
             break
         
         runResult =await Runner.run( #<==== Using .run method
-            smartAgent,
+            masterAgent,
             usrInp,
             run_config=config
         )
