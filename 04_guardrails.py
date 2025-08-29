@@ -6,7 +6,6 @@ from agents import  (
     InputGuardrailTripwireTriggered,
     OutputGuardrailTripwireTriggered,
     GuardrailFunctionOutput,
-    InputGuardrailResult,
     RunContextWrapper,
     TResponseInputItem,
     input_guardrail,
@@ -15,24 +14,27 @@ from agents import  (
 from pydantic import BaseModel
 
 from gemini_model import geminiModel, config
-class isAboutAOT(BaseModel):
+
+
+class llmOutput(BaseModel):
+    response: str
+
+class IsAboutAOT(BaseModel):
     isAboutAttackOnTitan: bool
-    reasoning: str
-    spoiler: str
+   
 
-
-guardrailAgent = Agent(
-    name="Safety Check",
+inputGuardrailAgent = Agent(
+    name="input Checker",
     instructions=""" Chech if user asking about Attack on Titan Anime """,
     model=geminiModel,
-    output_type=isAboutAOT
+    output_type=IsAboutAOT
   )
 
 @input_guardrail
-async def aotGuardrail(ctx: RunContextWrapper[None], agent: Agent, input: str|list[TResponseInputItem])->GuardrailFunctionOutput:
+async def inputGuardrail(ctx: RunContextWrapper, agent: Agent, input: str|list[TResponseInputItem])->GuardrailFunctionOutput:
             
     runResult =await Runner.run(
-        guardrailAgent,
+        inputGuardrailAgent,
         input,
         context=ctx.context,
         run_config=config
@@ -41,16 +43,40 @@ async def aotGuardrail(ctx: RunContextWrapper[None], agent: Agent, input: str|li
     return GuardrailFunctionOutput(
         output_info=runResult.final_output,
         # tripwire_triggered=True #result.final_output.isAboutAttackOnTitan,
+        tripwire_triggered= runResult.final_output.isAboutAttackOnTitan
+    )
+    
+    
+outputGuardrailAgent = Agent(
+    name="output checker",
+    instructions="check if there any thin about Attack on titan in output.",
+    model=geminiModel,
+    output_type=IsAboutAOT
+)
+
+@output_guardrail
+async def outputGuardrail(ctx: RunContextWrapper, agent: Agent, output: llmOutput):
+    runResult =await Runner.run(
+        outputGuardrailAgent,
+        output.response,
+        run_config=config,
+        context=ctx.context
+    )
+    
+    return GuardrailFunctionOutput(
+        output_info=runResult.final_output,
         tripwire_triggered=runResult.final_output.isAboutAttackOnTitan
     )
     
-agent = Agent(
+masterAgent = Agent(
     name="Answering Agent",
     instructions="You are a smart agent assistant.",
-    input_guardrails=[aotGuardrail]
+    input_guardrails=[inputGuardrail],
+    output_guardrails=[outputGuardrail],
+    output_type=llmOutput
 )
    
-async def main():
+def main():
     try:
         while True:
             usrInp = input("Ask Something >>> ")
@@ -58,18 +84,20 @@ async def main():
             if usrInp == "stop":
                 break
                 
-            result =await Runner.run(
-                starting_agent=agent,
+            result =Runner.run_sync(
+                starting_agent=masterAgent,
                 input=usrInp,
                 run_config=config
             )
             
-            print(result.final_output)
+            print(result.to_input_list())
     except InputGuardrailTripwireTriggered:
-        print("=======guardrail tripped========")
-   
+        print("====Alert: Guardrail input tripwire was triggered!====")
+    except OutputGuardrailTripwireTriggered:
+        print("====Alert: Guardrail output tripwire was triggered!====")
+        
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
     
     
 
