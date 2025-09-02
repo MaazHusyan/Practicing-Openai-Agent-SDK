@@ -1,9 +1,10 @@
 import asyncio
 
-from agents import Agent, Runner
+from agents import Agent, Runner, enable_verbose_stdout_logging
 
 from gemini_model import geminiModel, config
 
+enable_verbose_stdout_logging()
 
 agent = Agent(
     name="Master Agent",
