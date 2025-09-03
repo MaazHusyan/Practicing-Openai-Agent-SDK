@@ -28,13 +28,13 @@ client = AsyncOpenAI(
 # model 
 geminiModel = OpenAIChatCompletionsModel(
     openai_client = client,
-    model = "gemini-2.5-flash",
+    model="gemini-2.0-flash", # model = "gemini-2.5-flash", chaning to my model
 )
 
 # configuring the model
 config = RunConfig(
     model = geminiModel,
     model_provider = client,
-    tracing_disabled=False
+    tracing_disabled=True
 )
 
