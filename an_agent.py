@@ -1,5 +1,5 @@
 import asyncio
-from agents import Agent, Runner
+from agents import Agent, Runner, RunContextWrapper,function_tool
 from gemini_model import geminiModel, config
 
 
@@ -8,11 +8,16 @@ def quickAgent(agent_name=None, agent_instructions=None):
     Create a quick interactive agent loop.
     Can be imported and run from any file.
     """
+    # @function_tool
+    def run_context(cts:RunContextWrapper, agent):
+        print(cts)
+        return "you are a help full assistant"
 
     anAgent = Agent(
         name=agent_name,
-        instructions=agent_instructions,
-        model=geminiModel
+        instructions=run_context,
+        model=geminiModel,
+        # tool=[run_context]
     )
 
     async def main():

@@ -14,7 +14,7 @@ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY", "") #ONLY FOR ENABLIN
 
 
 gemini_api_key = os.getenv("GEMINI_API_KEY")
-gemini_base_url = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
+gemini_base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 if not gemini_api_key or not gemini_base_url:
     raise ValueError("API_KEY and BASE_URL must be set in the environment variables.")

@@ -90,7 +90,7 @@ def main():
                 run_config=config
             )
             
-            print(result.to_input_list())
+            print(result.final_output)
     except InputGuardrailTripwireTriggered:
         print("====Alert: Guardrail input tripwire was triggered!====")
     except OutputGuardrailTripwireTriggered:

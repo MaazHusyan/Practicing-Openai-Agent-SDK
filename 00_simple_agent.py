@@ -1,13 +1,20 @@
 import asyncio
 
-from agents import Agent, Runner
+from agents import Agent, Runner, RunContextWrapper
 
 from gemini_model import geminiModel, config
 
 
+
+def run_context(ctx:RunContextWrapper, agent:Agent):
+    print(ctx.context, "\n")
+    print(agent)
+    return "you are a help full assistant"
+
+
 masterAgent = Agent(
     name="Master Agent",
-    instructions="""  """,
+    instructions=run_context,
     model=geminiModel,
   )
 
