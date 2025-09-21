@@ -57,4 +57,4 @@ Coming soon! 📊
 **Author**
 ---------
 
-this project was created by [Maaz Husyan], a passionate AI enthusiast and developer. 🤖
+This project was created by [Maaz Husyan], a passionate AI enthusiast and developer. 🤖
