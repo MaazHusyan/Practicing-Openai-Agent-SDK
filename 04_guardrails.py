@@ -22,6 +22,8 @@ class llmOutput(BaseModel):
 class IsAboutAOT(BaseModel):
     isAboutAttackOnTitan: bool
    
+class IsAboutMaths(BaseModel):
+    isAboutMaths: bool
 
 inputGuardrailAgent = Agent(
     name="input Checker",
@@ -49,9 +51,9 @@ async def inputGuardrail(ctx: RunContextWrapper, agent: Agent, input: str|list[T
     
 outputGuardrailAgent = Agent(
     name="output checker",
-    instructions="check if there any thin about Attack on titan in output.",
+    instructions="check if there any thing about Mathematics in output if yes raise exception .",
     model=geminiModel,
-    output_type=IsAboutAOT
+    output_type=IsAboutMaths
 )
 
 @output_guardrail
@@ -65,7 +67,7 @@ async def outputGuardrail(ctx: RunContextWrapper, agent: Agent, output: llmOutpu
     
     return GuardrailFunctionOutput(
         output_info=runResult.final_output,
-        tripwire_triggered=runResult.final_output.isAboutAttackOnTitan
+        tripwire_triggered=runResult.final_output.isAboutMaths
     )
     
 masterAgent = Agent(
@@ -90,11 +92,11 @@ def main():
                 run_config=config
             )
             
-            print(result.to_input_list())
+            print(result.final_output)
     except InputGuardrailTripwireTriggered:
-        print("====Alert: Guardrail input tripwire was triggered!====")
+        print("====Alert: Guardrail INPUT tripwire was triggered!====")
     except OutputGuardrailTripwireTriggered:
-        print("====Alert: Guardrail output tripwire was triggered!====")
+        print("====Alert: Guardrail OUTPUT tripwire was triggered!====")
         
 if __name__ == "__main__":
     main()
