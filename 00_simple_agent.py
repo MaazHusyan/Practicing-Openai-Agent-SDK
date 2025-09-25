@@ -1,13 +1,13 @@
 import asyncio
 
-from agents import Agent, Runner
+from agents import Agent, Runner, RunContextWrapper
 
 from gemini_model import geminiModel, config
 
 
 agent = Agent(
     name="Master Agent",
-    instructions="""  """,
+    instructions=run_context,
     model=geminiModel,
   )
 
