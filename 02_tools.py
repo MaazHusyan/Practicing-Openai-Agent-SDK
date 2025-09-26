@@ -44,12 +44,21 @@ def aboutCars():
     {"name": "CX-5", "company": "Mazda", "color": "Red", "engine": "2.5L Turbo", "hp": 250},
     {"name": "K5", "company": "Kia", "color": "Blue", "engine": "1.6L Turbo", "hp": 180}
     ]
-    
     car = random.choice(cars)
     return car
 
 
     
+
+spanish_agent = Agent(
+    name="Spanish agent",
+    instructions="You translate the user's message to Spanish",
+)
+
+french_agent = Agent(
+    name="French agent",
+    instructions="You translate the user's message to French",
+)
 
 
 smartAgent = Agent(
@@ -58,10 +67,27 @@ smartAgent = Agent(
     use tool "randomFacts" if user ask about facts about any thing. """,
     model=geminiModel,
     tools=[randomFacts, aboutCars],
-    model_settings=ModelSettings(tool_choice="required"), # isse tool ahmesha call hoga 
+    model_settings=ModelSettings(tool_choice="required"), # isse tool hamesha call hoga 
     reset_tool_choice=True, # isko enable krne se tool choice reset krne se rok sakte hai
-    tool_use_behavior="stop_on_first_tool",
-    
+    tool_use_behavior="stop_on_first_tool", # isko enable krne se pehle tool ka output ayge sirf or loop end ho jae ga
+    )
+
+
+orchestrator= Agent(
+    name="Boss",
+    instructions="You rae a main orchestrator agent",
+    model=geminiModel,
+    handoffs=[smartAgent],
+    tools=[
+        spanish_agent.as_tool(
+            tool_name="translate_to_spanish",
+            tool_description="translate's the user message in spanish"
+        ),
+        french_agent.as_tool(
+            tool_name="translate_to_french",
+            tool_description="translate's the user message in french"
+        )
+    ]
 )
 
 async def main():
@@ -73,9 +99,10 @@ async def main():
             break
         
         runResult =await Runner.run( #<==== Using .run method
-            smartAgent,
+            orchestrator,
             usrInp,
-            run_config=config
+            run_config= config,
+            max_turns= 2
         )
         print("LLM Output >>>",runResult.final_output)
     
